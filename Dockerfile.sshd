@@ -1,0 +1,7 @@
+FROM debian:9.6-slim
+
+RUN apt update
+RUN apt install -y openssh-server
+RUN bash -c "echo root:toor | chpasswd"
+RUN echo 'PermitRootLogin yes' >> /etc/ssh/sshd_config
+RUN mkdir /run/sshd

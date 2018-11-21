@@ -1,0 +1,9 @@
+FROM testsshd
+
+#RUN apt install -y libpam-google-authenticator
+#COPY auth.conf /root/.google_authenticator
+#RUN chmod 0400 /root/.google_authenticator
+
+RUN apt install -y build-essential make golang libpam-dev
+RUN echo 'auth required pam_authy.so' >> /etc/pam.d/sshd
+RUN sed -i 's/^ChallengeResponseAuthentication no$/ChallengeResponseAuthentication yes/g' /etc/ssh/sshd_config

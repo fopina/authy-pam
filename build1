@@ -1,0 +1,5 @@
+#!/bin/bash
+
+cd $(dirname $0)
+
+docker build -t testsshd -f Dockerfile.sshd .
