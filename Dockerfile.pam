@@ -4,6 +4,6 @@ FROM testsshd
 #COPY auth.conf /root/.google_authenticator
 #RUN chmod 0400 /root/.google_authenticator
 
-RUN apt install -y build-essential make golang libpam-dev
+RUN apt install -y build-essential make golang libpam-dev pamtester vim ca-certificates
 RUN echo 'auth required pam_authy.so' >> /etc/pam.d/sshd
 RUN sed -i 's/^ChallengeResponseAuthentication no$/ChallengeResponseAuthentication yes/g' /etc/ssh/sshd_config
