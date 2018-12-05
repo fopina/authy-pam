@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"os"
 	"github.com/pelletier/go-toml"
 )
@@ -49,6 +48,7 @@ func (c *Config) SaveToFile(path string) error {
 	return nil
 }
 
+/*
 func main() {
 	config := Config{}
 	err := toml.Unmarshal([]byte(`
@@ -78,3 +78,4 @@ func main() {
 	config.Users["newone"] = "test"
 	config.SaveToFile("data2.conf")
 }
+*/

@@ -8,7 +8,6 @@ import (
 	"encoding/json"
 	"bytes"
 	"time"
-	"github.com/pelletier/go-toml"
 )
 
 type OneTouchStatus string
@@ -49,6 +48,8 @@ func (authy *Authy) DoRequest(request *http.Request) (*http.Response, error) {
 
 
 func (authy *Authy) SendApprovalRequest(userID string, message string) (OneTouchStatus, error) {
+	c := Config{}
+	c.LoadFromFile("/etc/pam_auth.conf")
 	sb := bytes.NewBufferString(authy.BaseURL)
 	if (authy.BaseURL[len(authy.BaseURL) - 1] != '/') {
 		sb.WriteString("/")
