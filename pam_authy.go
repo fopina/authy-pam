@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"bytes"
 	"time"
+	"github.com/pelletier/go-toml"
 )
 
 type OneTouchStatus string
@@ -120,10 +121,10 @@ func pamLog(format string, args ...interface{}) {
 }
 
 func main() {
-	auth := Authy{
+	authy := Authy{
 		APIKey:  "x",
 		//BaseURL: "https://api.authy.com",
 		BaseURL: "x",
 	}
-	auth.SendApprovalRequest("x", "say yes plsplspls")
+	authy.SendApprovalRequest("x", "say yes plsplspls")
 }
