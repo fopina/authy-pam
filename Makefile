@@ -1,4 +1,5 @@
 all: pam_authy.so
+	GOPATH=${PWD}/.go go get -d
 	GOPATH=${PWD}/.go go build -buildmode=c-shared -o pam_authy.so
 
 install: all
