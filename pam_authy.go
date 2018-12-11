@@ -48,8 +48,6 @@ func (authy *Authy) DoRequest(request *http.Request) (*http.Response, error) {
 
 
 func (authy *Authy) SendApprovalRequest(userID string, message string) (OneTouchStatus, error) {
-	c := Config{}
-	c.LoadFromFile("/etc/pam_auth.conf")
 	sb := bytes.NewBufferString(authy.BaseURL)
 	if (authy.BaseURL[len(authy.BaseURL) - 1] != '/') {
 		sb.WriteString("/")
@@ -57,8 +55,7 @@ func (authy *Authy) SendApprovalRequest(userID string, message string) (OneTouch
 	sb.WriteString("onetouch/json/users/")
 	sb.WriteString(userID)
 	sb.WriteString("/approval_requests")
-	var jsonStr = []byte(`{"message": "Buy cheese and bread for breakfast."}`)
-    req, err := http.NewRequest("POST", sb.String(), bytes.NewBuffer(jsonStr))
+    req, err := http.NewRequest("GET", sb.String(), nil)
     if err != nil {
         panic(err)
     }
@@ -122,10 +119,13 @@ func pamLog(format string, args ...interface{}) {
 }
 
 func main() {
+	config := Config{}
+	//config.LoadFromFile("/etc/pam_authy.conf")
+	config.LoadFromFile("data.conf")
+	fmt.Println(config.Users["root2"])
 	authy := Authy{
-		APIKey:  "x",
-		//BaseURL: "https://api.authy.com",
-		BaseURL: "x",
+		APIKey:  config.Authy.Token,
+		BaseURL: config.Authy.URL,
 	}
-	authy.SendApprovalRequest("x", "say yes plsplspls")
+	authy.SendApprovalRequest("12312332", "say yes plsplspls")
 }

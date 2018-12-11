@@ -11,8 +11,8 @@ import (
 #include <security/pam_appl.h>
 #include <stdlib.h>
 
-extern int pam_prompt(pam_handle_t *pamh, int style, char **response, const char *fmt);
-
+int pam_prompt(pam_handle_t *pamh, int style, char **response, const char *fmt);
+int pam_get_user(pam_handle_t *pamh, const char **user, const char *prompt);
 */
 import "C"
 
@@ -24,17 +24,33 @@ func init() {
 
 //export pam_sm_authenticate
 func pam_sm_authenticate(pamh *C.pam_handle_t, flags, argc C.int, argv **C.char) C.int {
-	var nameBuf *C.char
-	defer C.free(unsafe.Pointer(nameBuf))
-	C.pam_prompt(pamh, C.PAM_PROMPT_ECHO_ON, &nameBuf, C.CString("Your 6-digit token (or \"push\" or \"sms\"): "))
-	// pam_info() is defined like this anyway
-	C.pam_prompt(pamh, C.PAM_TEXT_INFO, nil, nameBuf)
-	auth := Authy{
-		APIKey:  "x",
-		//BaseURL: "https://api.authy.com",
-		BaseURL: "x",
+	var tempBuf *C.char
+	defer C.free(unsafe.Pointer(tempBuf))
+
+	config := Config{}
+	config.LoadFromFile("/etc/pam_authy.conf")
+
+	pam_err := C.pam_get_user(pamh, &tempBuf, nil)
+	if (pam_err != C.PAM_SUCCESS) {
+        return pam_err;
+    }
+	
+	user := C.GoString(tempBuf)
+
+	if config.Users[user] == "" {
+		// Authy not setup for this user
+		return C.PAM_IGNORE
 	}
-	res, err := auth.SendApprovalRequest("x", "say yes plsplspls")
+
+	C.pam_prompt(pamh, C.PAM_PROMPT_ECHO_ON, &tempBuf, C.CString("Your 6-digit token (or \"push\" or \"sms\"): "))
+	// pam_info() is defined like this anyway
+	C.pam_prompt(pamh, C.PAM_PROMPT_ECHO_ON, nil, tempBuf)
+
+	authy := Authy{
+		APIKey:  config.Authy.Token,
+		BaseURL: config.Authy.URL,
+	}
+	res, err := authy.SendApprovalRequest(config.Users[user], "say yes plsplspls")
 	if err != nil {
 		panic(err)
 	}

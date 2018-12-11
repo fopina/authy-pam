@@ -16,6 +16,7 @@ make test
 
 # TODO
 
-* CI builds and tests
-* Specify different conf file path
-* cmd utility to register users
+* [ ] CI builds and tests
+* [ ] Specify different conf file path
+* [ ] cmd utility to register users
+* [ ] cleanup
